@@ -1,0 +1,116 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    user-select: none;
+    font-family: Consolas, monospace;
+    color: white;
+    background-color: rgb(44, 42, 42);
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    display: grid;
+    grid-template-rows: 80px 1fr;
+}
+
+header {
+    display: grid;
+    grid-template-areas: "title _" "title copyright";
+    padding: 5px 20px;
+    background-color: #6617d4;
+}
+
+header * {
+    background-color: #6617d4;
+}
+
+.title {
+    grid-area: title;
+    font-size: 40px;
+    line-height: 70px;
+}
+
+.copyright {
+    grid-area: copyright;
+    text-align: right;
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.content {
+    display: grid;
+    grid-template-rows: 25% 1fr;
+}
+
+.panel {
+    display: grid;
+    grid-template-rows: 50px 1fr 40px;
+}
+
+.panel-title {
+    font-size: 20px;
+    line-height: 50px;
+    padding-left: 20px;
+    background-color: #000000;
+}
+
+.panel-setting-wrapper {
+    display: grid;
+    grid-template-columns: 45px 1fr;
+}
+
+.line-num-label, .line-num-label * {
+    background-color: #404040;
+}
+
+.line-num, .panel-setting {
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    line-height: 16px;
+    resize: none;
+}
+
+.line-num {
+    text-align: right;
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none;
+}
+
+.line-num::-webkit-scrollbar {
+    width: 0 !important
+}
+
+.panel-setting {
+    padding: 0 5px;
+}
+
+.panel-submit {
+    font-size: 20px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #6617d4;
+}
+
+.panel-submit:hover {
+    background-color: #3f13aa;
+    cursor: pointer;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: #7f7f7f;
+}
+
+::-webkit-scrollbar-button:start, ::-webkit-scrollbar-button:end {
+    display: none;
+}

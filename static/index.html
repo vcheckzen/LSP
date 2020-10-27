@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LSP</title>
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <meta id="viewport" name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
+<body>
+<header>
+    <div class="title">LOCAL SNI PROXY</div>
+    <div class="copyright"></div>
+</header>
+
+<div class="content">
+    <div class="panel dns">
+        <div class="panel-title">UPSTREAM DNS SETTING</div>
+        <div class="panel-setting-wrapper">
+            <label class="line-num-label"><textarea class="line-num"></textarea></label>
+            <label class="panel-setting-label"><textarea class="panel-setting"></textarea></label>
+        </div>
+        <div class="panel-submit">SAVE</div>
+    </div>
+
+    <div class="panel hosts">
+        <div class="panel-title">IP DOMAIN SNI MAPPING</div>
+        <div class="panel-setting-wrapper">
+            <label class="line-num-label"><textarea class="line-num"></textarea></label>
+            <label class="panel-setting-label"><textarea class="panel-setting"></textarea></label>
+        </div>
+        <div class="panel-submit">SAVE</div>
+    </div>
+</div>
+
+<script src="handler.js"></script>
+</body>
+</html>
