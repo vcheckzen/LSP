@@ -22,7 +22,7 @@ The server can only work on the same computer you use for internet surfing, occu
 
 ### Windows
 
-- Download [windows.7z](raw/main/dist/lsp-windows.7z)
+- Download [windows.7z](//github.com/vcheckzen/LSP/raw/main/dist/lsp-windows.7z)
 - Decompress it into your software folder
 - Open that folder, execute `install.bat` in it with administrator privilege
 
