@@ -2,9 +2,10 @@ package main
 
 import (
 	"bufio"
-	logger "github.com/sirupsen/logrus"
 	"os"
 	"strings"
+
+	logger "github.com/sirupsen/logrus"
 )
 
 type hostInfo struct {
