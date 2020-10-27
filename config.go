@@ -2,11 +2,9 @@ package main
 
 import (
 	"bufio"
+	logger "github.com/sirupsen/logrus"
 	"os"
 	"strings"
-	"sync"
-
-	logger "github.com/sirupsen/logrus"
 )
 
 type hostInfo struct {
@@ -14,7 +12,7 @@ type hostInfo struct {
 	sn   string
 }
 
-var (
+const (
 	dnsServerPath = "data/dns"
 	hostsPath     = "data/hosts"
 	caCertPath    = "data/ca.crt"
@@ -23,16 +21,19 @@ var (
 	apiFilePath   = "static"
 	apiDomain     = "lsp.com"
 	apiAddr       = "127.0.0.1:3080"
-	log           = logger.New()
-	dnsUpstreams  []string
-	hostResolver  sync.Map
+)
+
+var (
+	log          = logger.New()
+	dnsUpstreams = newSyncMap()
+	hostResolver = newSyncMap()
 )
 
 func init() {
 	parserProxy(hostsPath, true, parseHost)
 	parserProxy(dnsServerPath, true, parseDnsServer)
 	// relay api
-	hostResolver.Store(apiDomain, &hostInfo{addr: apiAddr})
+	hostResolver.add(apiDomain, &hostInfo{addr: apiAddr})
 }
 
 func parserProxy(path string, skipEmpty bool, lineParser func(line string)) {
@@ -62,21 +63,14 @@ func parseHost(line string) {
 	if len(fields) == 3 {
 		info.sn = fields[2]
 	}
-	hostResolver.Store(fields[1], info)
+	hostResolver.add(fields[1], info)
 }
 
 func parseDnsServer(line string) {
-	dnsUpstreams = append(
-		dnsUpstreams,
-		strings.Split(line, "://")...,
-	)
+	dnsUpstreams.add(line, true)
 }
 
 func saveAndRefresh(path, lines string, parser func(line string)) {
-	if lines == "" {
-		return
-	}
-
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
 		log.Warning("Can not open file. ", err)
@@ -102,6 +96,13 @@ func saveAndRefresh(path, lines string, parser func(line string)) {
 }
 
 func refreshConfig(dns, hosts string) {
-	saveAndRefresh(hostsPath, hosts, parseHost)
-	saveAndRefresh(dnsServerPath, dns, parseDnsServer)
+	if dns != "" {
+		dnsUpstreams.clear()
+		saveAndRefresh(dnsServerPath, dns, parseDnsServer)
+	}
+
+	if hosts != "" {
+		hostResolver.clear()
+		saveAndRefresh(hostsPath, hosts, parseHost)
+	}
 }

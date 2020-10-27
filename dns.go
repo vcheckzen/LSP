@@ -17,7 +17,7 @@ var (
 )
 
 func listenDns() {
-	if len(dnsUpstreams) == 0 {
+	if dnsUpstreams.isEmpty() {
 		log.Warning("No dns upstream, will not start dns server.")
 		return
 	}
@@ -49,7 +49,7 @@ func redirectToLocal(w dns.ResponseWriter, r *dns.Msg) {
 
 func relayDns(w dns.ResponseWriter, r *dns.Msg) {
 	host := strings.TrimRight(r.Question[0].Name, ".")
-	if _, ok := hostResolver.Load(host); ok {
+	if _, ok := hostResolver.get(host); ok {
 		redirectToLocal(w, r)
 		return
 	}
@@ -57,9 +57,11 @@ func relayDns(w dns.ResponseWriter, r *dns.Msg) {
 	client := clients.Get().(*dns.Client)
 	defer clients.Put(client)
 
-	for i := 0; i < len(dnsUpstreams); i += 2 {
-		client.Net = dnsUpstreams[i]
-		if rst, _, err := client.Exchange(r, dnsUpstreams[i+1]); err == nil {
+	upstreams := dnsUpstreams.keys()
+	for _, upstream := range upstreams {
+		splits := strings.Split(upstream.(string), "://")
+		client.Net = splits[0]
+		if rst, _, err := client.Exchange(r, splits[1]); err == nil {
 			if err := w.WriteMsg(rst); err == nil {
 				break
 			} else {

@@ -19,7 +19,7 @@ import (
 var (
 	ca                tls.Certificate
 	leaf              *x509.Certificate
-	certCache         sync.Map
+	certCache         = newSyncMap()
 	serialNumberLimit *big.Int
 	serialNumber      *big.Int
 	serverPrivateKey  *ecdsa.PrivateKey
@@ -69,7 +69,7 @@ func getCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
 		return nil, err
 	}
 
-	if cert, ok := certCache.Load(commonName); ok {
+	if cert, ok := certCache.get(commonName); ok {
 		return cert.(*tls.Certificate), nil
 	}
 
@@ -99,7 +99,7 @@ func getCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
 		Certificate: [][]byte{derBytes},
 		PrivateKey:  serverPrivateKey,
 	}
-	certCache.Store(commonName, cert)
+	certCache.add(commonName, cert)
 
 	return cert, nil
 }
@@ -110,9 +110,9 @@ func relayTls(src *tls.Conn) {
 		return
 	}
 
-	cache, ok := hostResolver.Load(src.ConnectionState().ServerName)
+	cache, ok := hostResolver.get(src.ConnectionState().ServerName)
 	if !ok {
-		log.Warningf("No ip for host: %s. ", src.ConnectionState().ServerName)
+		log.Warningf("No ip for host: %s.", src.ConnectionState().ServerName)
 		return
 	}
 	host := cache.(*hostInfo)
