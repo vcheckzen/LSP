@@ -14,7 +14,7 @@ The server can only work on the same computer you use for internet surfing, occu
 
 ## Features
 
-- Web Configuration UI 
+- Web Configuration UI
 - Multiple Upstream DNS Servers Setting
 - `IP Address - Domain - Server Name` Map Setting
 
@@ -22,9 +22,9 @@ The server can only work on the same computer you use for internet surfing, occu
 
 ### Windows
 
-- Download [windows.7z](dist/lsp-windows.7z)
+- Download [windows.7z](//github.com/vcheckzen/LSP/raw/main/dist/lsp-windows.7z)
 - Decompress it into your software folder
-- Open that folder, execute `init.bat` in it with administrator privilege
+- Open that folder, execute `install.bat` in it with administrator privilege
 
 ### Others
 
@@ -48,13 +48,13 @@ Different servers should be in different lines. Servers will not be used when th
 
 You can supply `hosts-like` config in this area to bypass both dns pollution and SNI filtering.
 
-Peculiarly, give `server name` after `ip domain` to nominate the domain going through SNI firewall. 
+Peculiarly, give `server name` after `ip domain` to nominate the domain going through SNI firewall.
 
-For example, the record below enable firewall to see a connection to `208.80.153.224` with server name `www.kernel.org`. 
+For example, the record below enable firewall to see a connection to `208.80.153.224` with server name `www.kernel.org`.
 
 When not supplied, program will use `www.apple.com`.
 
-```
+```batch
 208.80.153.224 www.wikipedia.org www.kernel.org
 ```
 
