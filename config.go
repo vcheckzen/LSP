@@ -2,10 +2,11 @@ package main
 
 import (
 	"bufio"
-	"os"
-	"strings"
-
 	logger "github.com/sirupsen/logrus"
+	"os"
+	"os/exec"
+	"runtime"
+	"strings"
 )
 
 type hostInfo struct {
@@ -33,8 +34,7 @@ var (
 func init() {
 	parserProxy(hostsPath, true, parseHost)
 	parserProxy(dnsServerPath, true, parseDnsServer)
-	// relay api
-	hostResolver.add(apiDomain, &hostInfo{addr: apiAddr})
+	refreshDNS()
 }
 
 func parserProxy(path string, skipEmpty bool, lineParser func(line string)) {
@@ -105,5 +105,24 @@ func refreshConfig(dns, hosts string) {
 	if hosts != "" {
 		hostResolver.clear()
 		saveAndRefresh(hostsPath, hosts, parseHost)
+	}
+
+	refreshDNS()
+}
+
+func refreshDNS() {
+	// relay api
+	hostResolver.add(apiDomain, &hostInfo{addr: apiAddr})
+
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("cmd.exe", "/C", "ipconfig", "/flushdns")
+	case "darwin":
+		cmd = exec.Command("/bin/bash", "killall", "-HUP", "mDNSResponder")
+	}
+	if cmd != nil {
+		stdout, _ := cmd.CombinedOutput()
+		log.Info(string(stdout))
 	}
 }
