@@ -20,8 +20,7 @@ var (
 	ca                tls.Certificate
 	leaf              *x509.Certificate
 	certCache         = newSyncMap()
-	serialNumberLimit *big.Int
-	serialNumber      *big.Int
+	serialNumberLimit = new(big.Int).Lsh(big.NewInt(1), 128)
 	serverPrivateKey  *ecdsa.PrivateKey
 )
 
@@ -37,11 +36,6 @@ func listenTls() {
 
 	if serverPrivateKey, err = ecdsa.GenerateKey(elliptic.P256(), rand.Reader); err != nil {
 		log.Fatal("Can generate server private key. ", err)
-	}
-
-	serialNumberLimit = new(big.Int).Lsh(big.NewInt(1), 128)
-	if serialNumber, err = rand.Int(rand.Reader, serialNumberLimit); err != nil {
-		log.Fatal("Can generate serial number. ", err)
 	}
 
 	listen, err := tls.Listen(
@@ -71,6 +65,12 @@ func getCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
 
 	if cert, ok := certCache.get(commonName); ok {
 		return cert.(*tls.Certificate), nil
+	}
+
+	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
+	if err != nil {
+		log.Warning("Can generate serial number. ", err)
+		return nil, err
 	}
 
 	now := time.Now()
